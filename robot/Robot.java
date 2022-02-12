@@ -78,11 +78,7 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
-     //System.out.println(hid.getRawAxis(0));
-    //  var drivetrainController = new Joystick(0);
-    //  System.out.println(drivetrainController.getRawAxis(1));
-    }
+  public void robotPeriodic() {}
 
 
   /**
