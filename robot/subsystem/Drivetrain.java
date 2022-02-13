@@ -23,8 +23,9 @@ public class Drivetrain extends SubsystemBase{
     double stabilizationSetPoint = 0;
 
     private final double clicksPerInch = 4096 / (6 * Math.PI);
-    double targetRangeRight = 20;
-    double targetRangeLeft = 30;
+    double targetRangeRight = 1500;
+    double targetRangeLeft = 1500;
+    double targetPosition;
 
     public Drivetrain() {
         leftMaster = new TalonSRX(4);
@@ -55,12 +56,16 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.follow(rightMaster);
 
         zeroSensors();
+    }
+
+    public void zeroSensors() {
+        rightMaster.setSelectedSensorPosition(0);
+        leftMaster.setSelectedSensorPosition(0);
 
         try {
             navX = new AHRS(SPI.Port.kMXP);
           } catch (RuntimeException ex) {
             System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
-            // FrogLogger.logMsg("ERROR GETTING GYRO" ,kSource,true);
           }
       
           /* NavX calibration completed ~15 seconds after it is powered on */
@@ -79,11 +84,6 @@ public class Drivetrain extends SubsystemBase{
         }
     }
 
-    public void zeroSensors() {
-        rightMaster.setSelectedSensorPosition(0);
-        leftMaster.setSelectedSensorPosition(0);
-    }
-
     public void arcadeDrive(double velocity, double turnSpeed) {
         
         
@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase{
                 stabilizationSetPoint = navX.getYaw();
             } else if (velocity != 0) {
                 double error = (navX.getYaw() - stabilizationSetPoint);
-                error = Math.abs(error) < 2 ? 0 : error;
+                error = Math.abs(error) < 1 ? 0 : error;
 
                 turnSpeed = -0.05 * error;
             }
@@ -116,28 +116,74 @@ public class Drivetrain extends SubsystemBase{
         right *= ratio;
 
         leftMaster.set(ControlMode.PercentOutput, left);
-        rightMaster.set(ControlMode.PercentOutput, right);
+        rightMaster.set(ControlMode.PercentOutput, right); 
+    }
+    
 
+
+    public void autonDrive(double velocity, double turnSpeed, double inches) {
+        targetPosition = inches * clicksPerInch;
+
+        while (!isAtTarget()) {
+            if (turnSpeed == 0) {
+                if (!turnSpeedWasZero) {
+                    stabilizationSetPoint = navX.getYaw();
+                } else if (velocity != 0) {
+                    double error = (navX.getYaw() - stabilizationSetPoint);
+                    error = Math.abs(error) < 1 ? 0 : error;
+
+                    turnSpeed = -0.05 * error;
+                }
+
+                turnSpeedWasZero = true;
+            } else {
+                turnSpeedWasZero = false;
+            }
+
+            double left = velocity + turnSpeed;
+            double right = velocity - turnSpeed;
+            double ratio = 1;
+
+            /*
+            if (left > 1) {
+                ratio = 1/left;
+            } else if (right > 1) {
+                ratio = 1/right;
+            }
+            */
+
+            left *= ratio;
+            right *= ratio;
+
+            leftMaster.set(ControlMode.PercentOutput, left);
+            rightMaster.set(ControlMode.PercentOutput, right); 
+
+            SmartDashboard.putNumber("Left Velocity", left);
+            SmartDashboard.putNumber("Right Velocity", right);
+        }
         
     }
 
+
     public void driveForInches(double inches) {
-        double targetPosition = inches * clicksPerInch;
+        targetPosition = inches * clicksPerInch;
         SmartDashboard.putNumber("Target Position", targetPosition);
+
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, targetPosition);
     }
 
     public void turnForInches(double inches) {
-        double targetPosition = inches * clicksPerInch;
+        targetPosition = inches * clicksPerInch;
         SmartDashboard.putNumber("Target Position", targetPosition);
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, -targetPosition);
     }
 
     public boolean isAtTarget() {
-        return (Math.abs(leftMaster.getClosedLoopError()) <= targetRangeLeft) && (Math.abs(rightMaster.getClosedLoopError()) <= targetRangeRight);
-
+        //return (Math.abs(leftMaster.getClosedLoopError()) <= targetRangeLeft) && (Math.abs(rightMaster.getClosedLoopError()) <= targetRangeRight);
+        //System.out.println(targetPosition);
+        return (Math.abs(leftMaster.getSelectedSensorPosition(0) - targetPosition) <= targetRangeLeft) && (Math.abs(rightMaster.getSelectedSensorPosition(0) - targetPosition) <= targetRangeRight);
     }
     public void teleopPeriodic() {
         OI.getInstance().updateInputs();

@@ -12,6 +12,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.subsystem.Drivetrain;
 import com.kauailabs.navx.frc.*;
+import edu.wpi.first.wpilibj.SPI;
 
 //import frc.robot.subsystem.OI;
 
@@ -83,8 +84,7 @@ public class Robot extends TimedRobot {
       case kDefaultAuto:
       default:
         CommandScheduler.getInstance().schedule(
-          new DriveCommand(40)
-        );
+          new DriveCommand(40));
       break;
     }
   }
@@ -94,6 +94,14 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
+
+    /*
+    if (!DriveCommand.isFinished()) {
+      if (Math.abs(navX.getYaw() - 0) > 1) {
+
+      }
+    }
+    */
   }
 
   /** This function is called once when teleop is enabled. */
