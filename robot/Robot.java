@@ -76,9 +76,9 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
-    //drivetrain.turnForInches(12);
 
     drivetrain.resetGyro();
+    drivetrain.zeroSensors();
 
     switch (m_autoSelected) {
       case kDefaultAuto:
@@ -94,14 +94,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
-
-    /*
-    if (!DriveCommand.isFinished()) {
-      if (Math.abs(navX.getYaw() - 0) > 1) {
-
-      }
-    }
-    */
   }
 
   /** This function is called once when teleop is enabled. */
