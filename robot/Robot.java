@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.subsystem.Drivetrain;
+
+import java.util.logging.LogManager;
+
 import com.kauailabs.navx.frc.*;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -47,6 +50,13 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     drivetrain = new Drivetrain();
+
+    try {
+      LogManager.getLogManager().reset();
+    } catch (Exception exception) {
+      System.out.println("Security Exception");
+    }
+    
     //OI  buttons = new OI();
   }
 
@@ -73,12 +83,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    System.out.println("--------------------AUTONOMOUS--------------------");
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
-    //drivetrain.turnForInches(12);
 
     drivetrain.resetGyro();
+    drivetrain.zeroSensors();
 
     switch (m_autoSelected) {
       case kDefaultAuto:
@@ -94,19 +105,12 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
-
-    /*
-    if (!DriveCommand.isFinished()) {
-      if (Math.abs(navX.getYaw() - 0) > 1) {
-
-      }
-    }
-    */
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    System.out.println("--------------------TELEOP--------------------");
     drivetrain.resetGyro();
   }
 
