@@ -15,7 +15,10 @@ public class OI {
     public Joystick armController;
 
     public double driveSpeedLimit = 0.8;
-    public double turnSpeedLimit = 0.5;
+    public double turnSpeedLimit = 0.6;
+
+    public double autonDriveSpeedLimit = 0.4;
+    public double autonTurnSpeedLimit = 0.3;
 
     private static OI instance = null;
     public static OI getInstance() {
