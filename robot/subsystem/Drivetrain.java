@@ -29,7 +29,7 @@ public class Drivetrain extends SubsystemBase{
     double targetPosition;
 
     public Drivetrain() {
-        leftMaster = new TalonSRX(4);      // This motor is hotter than the rest
+        leftMaster = new TalonSRX(4); 
         leftFollower = new TalonSRX(2);
         rightMaster = new TalonSRX(1);
         rightFollower = new TalonSRX(3);
@@ -197,8 +197,8 @@ public class Drivetrain extends SubsystemBase{
                 }
             
 
-                left = (velocity * OI.getInstance().autonDriveSpeedLimit) + turnSpeed;
-                right = (velocity * OI.getInstance().autonDriveSpeedLimit) - turnSpeed;
+                left = velocity + turnSpeed;
+                right = velocity - turnSpeed;
                 double ratio = 1;
 
                 if (left > 1) {
@@ -224,14 +224,11 @@ public class Drivetrain extends SubsystemBase{
                 //System.out.println("Right PercentOutput: " + right);
             }
 
-            System.out.println("Target Reached");
 
             if (isAtTarget()) {
                 stop();
-                System.out.println("Inside if(isAtTarget())");
             }
 
-            System.out.println("Robot Stopped");
 
         // } else {
         //     leftMaster.set(ControlMode.PercentOutput, 0);

@@ -95,8 +95,11 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kDefaultAuto:
       default:
-        CommandScheduler.getInstance().schedule(
-          new DriveCommand(15));
+        CommandScheduler.getInstance().schedule(new DriveCommand(40));      // This line can only be given one command, so we need to put a command group here instead
+        CommandScheduler.getInstance().schedule(new TurnCommand(24));
+        // CommandScheduler.getInstance().schedule(new DriveCommand(20));
+        // CommandScheduler.getInstance().schedule(new TurnCommand(-24));
+        // CommandScheduler.getInstance().schedule(new DriveCommand(40));
       break;
     }
   }
