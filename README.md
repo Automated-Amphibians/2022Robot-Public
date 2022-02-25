@@ -1,1 +1,1 @@
-The robot moves just fine during teleop if autonomous is run first. We also figure out why the robot would only do one command during autonomous. We need to create a new sequential command group and put all the commands there first then call that command group in robotInit function.
+The robot moves just fine during teleop if autonomous is run first. But we still need to test the new command group to see if it works properly. The intake also works now. 
