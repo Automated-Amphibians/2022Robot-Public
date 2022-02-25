@@ -27,6 +27,7 @@ public class Drivetrain extends SubsystemBase{
     double targetRangeRight = 100;
     double targetRangeLeft = 100;
     double targetPosition;
+    Intake intake;
 
     public Drivetrain() {
         leftMaster = new TalonSRX(4); 
@@ -56,6 +57,10 @@ public class Drivetrain extends SubsystemBase{
 
         leftFollower.follow(leftMaster);
         rightFollower.follow(rightMaster);
+
+
+        intake = new Intake();
+
 
         zeroSensors();
     }
@@ -123,43 +128,8 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.set(ControlMode.PercentOutput, right);    
     }
     
-    public void autonDriveTEST(double velocity, double turnSpeed, double inches) {
-        if (turnSpeed == 0) {
-            if (!turnSpeedWasZero) {
-                stabilizationSetPoint = navX.getYaw();
-            } else if (velocity != 0) {
-                double error = (navX.getYaw() - stabilizationSetPoint);
-                error = Math.abs(error) < 1 ? 0 : error;
-
-                turnSpeed = -0.05 * error;
-            }
-
-            turnSpeedWasZero = true;
-        } else {
-            turnSpeedWasZero = false;
-        }
-
-        double left = velocity + turnSpeed;
-        double right = velocity - turnSpeed;
-        double ratio = 1;
-
-        if (left > 1) {
-            ratio = 1/left;
-        } else if (right > 1) {
-            ratio = 1/right;
-        }
-
-        left *= ratio;
-        right *= ratio;
-
-        leftMaster.set(ControlMode.PercentOutput, left);
-        rightMaster.set(ControlMode.PercentOutput, right);
-    }
 
     public void autonDrive(double velocity, double turnSpeed, double inches) {
-        
-
-        //if (navX.isConnected()) {
             targetPosition = inches * clicksPerInch;
             double left;
             double right;
@@ -167,22 +137,6 @@ public class Drivetrain extends SubsystemBase{
 
             // get yaw center
             stabilizationSetPoint = navX.getYaw();
-
-            // while (!isAtTarget()) {
-            //     if (turnSpeed == 0) {
-            //         if (!turnSpeedWasZero) {
-            //             stabilizationSetPoint = navX.getYaw();
-            //         } else if (velocity != 0) {
-            //             double error = (navX.getYaw() - stabilizationSetPoint);
-            //             error = Math.abs(error) < 1 ? 0 : error;
-
-            //             turnSpeed = -0.05 * error;
-            //         }
-
-            //         turnSpeedWasZero = true;
-            //     } else {
-            //         turnSpeedWasZero = false;
-            //     }
 
 
             while (!isAtTarget()) {
@@ -219,27 +173,17 @@ public class Drivetrain extends SubsystemBase{
 
                 SmartDashboard.putNumber("Left Velocity", left);
                 SmartDashboard.putNumber("Right Velocity", right);
-
-                //System.out.println("Left PercentOutput: " + left);
-                //System.out.println("Right PercentOutput: " + right);
             }
 
 
             if (isAtTarget()) {
                 stop();
             }
-
-
-        // } else {
-        //     leftMaster.set(ControlMode.PercentOutput, 0);
-        //     rightMaster.set(ControlMode.PercentOutput, 0);
-        // } 
     }
 
 
     public void driveForInches(double inches) {
         targetPosition = inches * clicksPerInch;
-        //SmartDashboard.putNumber("Target Position", targetPosition);
 
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, targetPosition);
@@ -247,20 +191,26 @@ public class Drivetrain extends SubsystemBase{
 
     public void turnForInches(double inches) {
         targetPosition = inches * clicksPerInch;
-        //SmartDashboard.putNumber("Target Position", targetPosition);
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, -targetPosition);
     }
 
     public boolean isAtTarget() {
         System.out.println(targetPosition);
-        //return (Math.abs(leftMaster.getClosedLoopError()) <= targetRangeLeft) && (Math.abs(rightMaster.getClosedLoopError()) <= targetRangeRight);
         return (leftMaster.getSelectedSensorPosition(0) >= targetPosition) || (rightMaster.getSelectedSensorPosition(0) >= targetPosition);
     }
 
     public void teleopPeriodic() {
         OI.getInstance().updateInputs();
         arcadeDrive(OI.getInstance().robotVelocity, OI.getInstance().robotTurnSpeed);
+
+        if (OI.getInstance().drivetrainController.getRawButton(5)) {
+            intake.rollIn();
+        } else if (OI.getInstance().drivetrainController.getRawButton(6)) {
+            intake.rollOut();
+        } else {
+            intake.stopRolling();
+        }
     }
 
     @Override
@@ -270,21 +220,11 @@ public class Drivetrain extends SubsystemBase{
         SmartDashboard.putBoolean("isAtTarget", isAtTarget());
         SmartDashboard.putNumber("Gyro Angle", navX.getYaw());
         SmartDashboard.putNumber("Target Position", targetPosition);
-       /*
-        System.out.println("Raw Gyro Z: " + navX.getRawGyroZ());
-        System.out.println("Gyro angle: " + navX.getYaw());
-        System.out.println("navX connection: " + navX.isConnected());
-        */
+
         SmartDashboard.putNumber("Robot Velocity", OI.getInstance().robotVelocity);
         SmartDashboard.putNumber("Robot Turn Speed", OI.getInstance().robotTurnSpeed);
         SmartDashboard.putNumber("Drive Speed Limit", OI.getInstance().driveSpeedLimit);
         SmartDashboard.putNumber("Turn Speed Limit", OI.getInstance().turnSpeedLimit);
-        /*
-        System.out.println("Motor 1 Power: " + rightMaster.getSupplyCurrent());
-        System.out.println("Motor 2 Power: " + leftFollower.getSupplyCurrent());
-        System.out.println("Motor 3 Power: " + rightFollower.getSupplyCurrent());
-        System.out.println("Motor 4 Power: " + leftMaster.getSupplyCurrent());
-        */
     }
     
     public void stop() {

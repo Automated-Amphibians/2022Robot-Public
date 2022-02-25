@@ -31,10 +31,10 @@ public class OI {
 
     public OI(){
         drivetrainController = new Joystick(0);
-        armController = new Joystick(1);
+        //armController = new Joystick(1);
         
-        leftBumper = new JoystickButton(armController, 5);
-        rightBumper = new JoystickButton(armController, 6);
+        leftBumper = new JoystickButton(drivetrainController, 5);
+        rightBumper = new JoystickButton(drivetrainController, 6);
     }
 
 
@@ -58,7 +58,4 @@ public class OI {
             System.out.println("Turn speed limit: " + turnSpeedLimit);
         }   
     }
-
-
-
 }

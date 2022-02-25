@@ -9,14 +9,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.TurnCommand;
+import frc.robot.commands.CommandGroup;
 import frc.robot.subsystem.Drivetrain;
 
 import java.util.logging.LogManager;
-
-import com.kauailabs.navx.frc.*;
-import edu.wpi.first.wpilibj.SPI;
 
 //import frc.robot.subsystem.OI;
 
@@ -57,8 +53,6 @@ public class Robot extends TimedRobot {
     } catch (Exception exception) {
       System.out.println("Security Exception");
     }
-    
-    //OI  buttons = new OI();
   }
 
   /**
@@ -95,11 +89,7 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kDefaultAuto:
       default:
-        CommandScheduler.getInstance().schedule(new DriveCommand(40));      // This line can only be given one command, so we need to put a command group here instead
-        CommandScheduler.getInstance().schedule(new TurnCommand(24));
-        // CommandScheduler.getInstance().schedule(new DriveCommand(20));
-        // CommandScheduler.getInstance().schedule(new TurnCommand(-24));
-        // CommandScheduler.getInstance().schedule(new DriveCommand(40));
+        CommandScheduler.getInstance().schedule(new CommandGroup()); 
       break;
     }
   }

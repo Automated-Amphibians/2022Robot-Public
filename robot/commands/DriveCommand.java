@@ -24,6 +24,5 @@ public class DriveCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         return Robot.drivetrain.isAtTarget();
-        // return false;
     }
 }
