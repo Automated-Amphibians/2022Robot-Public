@@ -31,10 +31,7 @@ public class Robot extends TimedRobot {
 
 
 
-  public Robot() {
-      
-  
-  }
+  public Robot() {}
 
 
   /**

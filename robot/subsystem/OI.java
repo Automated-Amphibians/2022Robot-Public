@@ -14,7 +14,7 @@ public class OI {
     public Joystick drivetrainController;
     public Joystick armController;
 
-    public double driveSpeedLimit = 0.8;
+    public double driveSpeedLimit = 1.0;
     public double turnSpeedLimit = 0.6;
 
     public double autonDriveSpeedLimit = 0.4;
@@ -22,19 +22,19 @@ public class OI {
 
     private static OI instance = null;
     public static OI getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new OI();
-
+        }
         return instance;
     }
 
 
     public OI(){
         drivetrainController = new Joystick(0);
-        //armController = new Joystick(1);
+        armController = new Joystick(1);
         
-        leftBumper = new JoystickButton(drivetrainController, 5);
-        rightBumper = new JoystickButton(drivetrainController, 6);
+        leftBumper = new JoystickButton(armController, 5);
+        rightBumper = new JoystickButton(armController, 6);
     }
 
 
@@ -48,8 +48,6 @@ public class OI {
 
         robotVelocity = drivetrainAxis * driveSpeedLimit * -1;
         robotTurnSpeed = turnAxis * turnSpeedLimit;
-
-
     }
 
     public void printSpeedLimits() {

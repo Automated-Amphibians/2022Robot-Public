@@ -30,10 +30,10 @@ public class Drivetrain extends SubsystemBase{
     Intake intake;
 
     public Drivetrain() {
-        leftMaster = new TalonSRX(4); 
-        leftFollower = new TalonSRX(2);
-        rightMaster = new TalonSRX(1);
-        rightFollower = new TalonSRX(3);
+        leftMaster = new TalonSRX(3); 
+        leftFollower = new TalonSRX(4);
+        rightMaster = new TalonSRX(2);
+        rightFollower = new TalonSRX(1);
 
         // Motors on the right are running in the opposite direction of the direction that they are suppose to go
         rightMaster.setInverted(true);
@@ -43,7 +43,6 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.setNeutralMode(NeutralMode.Brake);
         leftMaster.setNeutralMode(NeutralMode.Brake);
         leftFollower.setNeutralMode(NeutralMode.Brake);
-
 
         // rightMaster and leftMaster are motor controllers that are connected to the encoders
         rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -123,71 +122,71 @@ public class Drivetrain extends SubsystemBase{
         right *= ratio;
 
         leftMaster.set(ControlMode.PercentOutput, left);
-        leftFollower.set(ControlMode.PercentOutput, left);
+        //leftFollower.set(ControlMode.PercentOutput, left);
         rightMaster.set(ControlMode.PercentOutput, right);
-        rightFollower.set(ControlMode.PercentOutput, right);    
+        //rightFollower.set(ControlMode.PercentOutput, right);    
     }
     
 
     public void autonDrive(double velocity, double turnSpeed, double inches) {
-            targetPosition = inches * clicksPerInch;
-            double left;
-            double right;
-            System.out.println("Target Position: " + targetPosition);
+        targetPosition = inches * clicksPerInch;
+        double left;
+        double right;
+        System.out.println("Target Position: " + targetPosition);
 
-            // get yaw center
-            stabilizationSetPoint = navX.getYaw();
+        // get yaw center
+        stabilizationSetPoint = navX.getYaw();
 
 
-            while (!isAtTarget()) {
-                // turn speed is 0 (not turning)
-                if (!isTurning) {
+        while (!isAtTarget()) {
+            // turn speed is 0 (not turning)
+            if (!isTurning) {
                     
-                    // find error
-                    double error = (navX.getYaw() - stabilizationSetPoint);
-                    error = Math.abs(error) < 1 ? 0 : error;
-                    // set adjustment factor
-                    turnSpeed = -0.05 * error;
-                }
+                // find error
+                double error = (navX.getYaw() - stabilizationSetPoint);
+                error = Math.abs(error) < 1 ? 0 : error;
+                // set adjustment factor
+                turnSpeed = -0.05 * error;
+            }
             
 
-                left = velocity + turnSpeed;
-                right = velocity - turnSpeed;
-                double ratio = 1;
+            left = velocity + turnSpeed;
+            right = velocity - turnSpeed;
+            double ratio = 1;
 
-                if (left > 1) {
-                    ratio = 1/left;
-                } else if (right > 1) {
-                    ratio = 1/right;
-                }
+            if (left > 1) {
+                ratio = 1/left;
+            } else if (right > 1) {
+                ratio = 1/right;
+            }
                 
 
-                left *= ratio;
-                right *= ratio;
+            left *= ratio;
+            right *= ratio;
 
-                leftMaster.set(ControlMode.PercentOutput, left);
-                rightMaster.set(ControlMode.PercentOutput, right); 
+            leftMaster.set(ControlMode.PercentOutput, left);
+            rightMaster.set(ControlMode.PercentOutput, right); 
 
-                leftFollower.set(ControlMode.PercentOutput, left);
-                rightFollower.set(ControlMode.PercentOutput, right);
+            // leftFollower.set(ControlMode.PercentOutput, left);
+            // rightFollower.set(ControlMode.PercentOutput, right);
 
-                SmartDashboard.putNumber("Left Velocity", left);
-                SmartDashboard.putNumber("Right Velocity", right);
-            }
+            SmartDashboard.putNumber("Left Velocity", left);
+            SmartDashboard.putNumber("Right Velocity", right);
+        }
 
-
-            if (isAtTarget()) {
-                stop();
-            }
+        if (isAtTarget()) {
+            stop();
+        }
     }
 
-
+    /*
     public void driveForInches(double inches) {
         targetPosition = inches * clicksPerInch;
 
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, targetPosition);
     }
+    */
 
     public void turnForInches(double inches) {
         targetPosition = inches * clicksPerInch;
@@ -196,7 +195,7 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public boolean isAtTarget() {
-        System.out.println(targetPosition);
+        //System.out.println(targetPosition);
         return (leftMaster.getSelectedSensorPosition(0) >= targetPosition) || (rightMaster.getSelectedSensorPosition(0) >= targetPosition);
     }
 
@@ -225,6 +224,8 @@ public class Drivetrain extends SubsystemBase{
         SmartDashboard.putNumber("Robot Turn Speed", OI.getInstance().robotTurnSpeed);
         SmartDashboard.putNumber("Drive Speed Limit", OI.getInstance().driveSpeedLimit);
         SmartDashboard.putNumber("Turn Speed Limit", OI.getInstance().turnSpeedLimit);
+
+        SmartDashboard.putNumber("Arm Encoder Position", Arm.getInstance().armEncoder.getPosition());
     }
     
     public void stop() {

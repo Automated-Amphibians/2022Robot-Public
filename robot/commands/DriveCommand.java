@@ -11,16 +11,15 @@ public class DriveCommand extends CommandBase {
         distance = inches;
     }
 
+
     @Override
     public void initialize() {
         System.out.println(Robot.drivetrain.isAtTarget());
         Robot.drivetrain.zeroSensors();
-        //Robot.drivetrain.driveForInches(distance);
         Robot.drivetrain.autonDrive(0.8, 0, distance);
     }
 
     
-
     @Override
     public boolean isFinished() {
         return Robot.drivetrain.isAtTarget();
