@@ -1,1 +1,1 @@
-The robot moves just fine during teleop if autonomous is run first. But we still need to test the new command group to see if it works properly. The intake also works now. 
+The robot moves fine during teleop, but it might still turn around when it should go forward now and then. The intake and the arm should work fine. The command group didn't really work. It kind of mixes the commands together. 
