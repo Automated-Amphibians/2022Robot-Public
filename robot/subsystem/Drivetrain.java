@@ -14,7 +14,8 @@ public class Drivetrain extends SubsystemBase{
     private TalonSRX leftMaster;
     private TalonSRX leftFollower;
     private TalonSRX rightMaster;
-    private TalonSRX rightFollower;    
+    private TalonSRX rightFollower;   
+    double distance; 
 
     AHRS navX;
     private boolean calibration_complete = false;
@@ -26,7 +27,7 @@ public class Drivetrain extends SubsystemBase{
     private final double clicksPerInch = 4096 / (6 * Math.PI);
     double targetRangeRight = 100;
     double targetRangeLeft = 100;
-    double targetPosition;
+    double targetPosition = 0;
     Intake intake;
 
     public Drivetrain() {
@@ -122,12 +123,16 @@ public class Drivetrain extends SubsystemBase{
         right *= ratio;
 
         leftMaster.set(ControlMode.PercentOutput, left);
-        //leftFollower.set(ControlMode.PercentOutput, left);
+        leftFollower.set(ControlMode.PercentOutput, left);
         rightMaster.set(ControlMode.PercentOutput, right);
-        //rightFollower.set(ControlMode.PercentOutput, right);    
+        rightFollower.set(ControlMode.PercentOutput, right);    
     }
     
-
+    public void DriveCommand(double inches) {
+        distance = inches;
+        autonDrive(0.8, 0, distance);
+        //System.out.println("HELLOOOOOOOOO");
+    }
     public void autonDrive(double velocity, double turnSpeed, double inches) {
         targetPosition = inches * clicksPerInch;
         double left;
@@ -138,10 +143,9 @@ public class Drivetrain extends SubsystemBase{
         stabilizationSetPoint = navX.getYaw();
 
 
-        while (!isAtTarget()) {
+        if (!isAtTarget()) {
             // turn speed is 0 (not turning)
             if (!isTurning) {
-                    
                 // find error
                 double error = (navX.getYaw() - stabilizationSetPoint);
                 error = Math.abs(error) < 1 ? 0 : error;
@@ -167,8 +171,8 @@ public class Drivetrain extends SubsystemBase{
             leftMaster.set(ControlMode.PercentOutput, left);
             rightMaster.set(ControlMode.PercentOutput, right); 
 
-            // leftFollower.set(ControlMode.PercentOutput, left);
-            // rightFollower.set(ControlMode.PercentOutput, right);
+            leftFollower.set(ControlMode.PercentOutput, left);
+            rightFollower.set(ControlMode.PercentOutput, right);
 
             SmartDashboard.putNumber("Left Velocity", left);
             SmartDashboard.putNumber("Right Velocity", right);
@@ -196,20 +200,14 @@ public class Drivetrain extends SubsystemBase{
 
     public boolean isAtTarget() {
         //System.out.println(targetPosition);
-        return (leftMaster.getSelectedSensorPosition(0) >= targetPosition) || (rightMaster.getSelectedSensorPosition(0) >= targetPosition);
+        
+        return (Math.abs(leftMaster.getSelectedSensorPosition(0)) >= targetPosition) || (Math.abs(rightMaster.getSelectedSensorPosition(0)) >= targetPosition);
     }
 
     public void teleopPeriodic() {
         OI.getInstance().updateInputs();
+        OI.getInstance().updateSpeedLimits();
         arcadeDrive(OI.getInstance().robotVelocity, OI.getInstance().robotTurnSpeed);
-
-        // if (OI.getInstance().armController.getRawButton(5)) {
-        //     intake.rollIn();
-        // } else if (OI.getInstance().armController.getRawButton(6)) {
-        //     intake.rollOut();
-        // } else {
-        //     intake.stopRolling();
-        // }
     }
 
     @Override

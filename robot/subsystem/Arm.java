@@ -2,22 +2,21 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-//import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-//import com.revrobotics.jni.CANSparkMaxJNI;
 
 public class Arm extends SubsystemBase{
     public CANSparkMax armMotor;
     public RelativeEncoder armEncoder;
 
-
-    private static Arm instance = null;
     double power;
     double powerFactor;
+    double maxEncoderValue = 22.5;
+
+    private static Arm instance = null;
+    
     public static Arm getInstance() {
         if (instance == null) {
             instance = new Arm();
@@ -29,15 +28,18 @@ public class Arm extends SubsystemBase{
         armMotor = new CANSparkMax(10, MotorType.kBrushless);
         armEncoder = armMotor.getEncoder();
         armMotor.setIdleMode(IdleMode.kBrake);
-       
     }
 
-    public void armInit(){
+    public void resetEncoder(){
         armEncoder.setPosition(0);
     }
 
+    public void stop() {
+        armMotor.set(0);
+    }
+
     public void armPeriodic() {
-        powerFactor = 0.25;
+        powerFactor = 0.275;
         power = -OI.getInstance().armController.getRawAxis(5) * powerFactor;
        
 
@@ -51,7 +53,7 @@ public class Arm extends SubsystemBase{
             if (power < 0) {
                 powerFactor = 0;
             }
-        } else if (armEncoder.getPosition() >= 30) {
+        } else if (armEncoder.getPosition() >= maxEncoderValue) {
             if (power > 0) {
                 power = 0;
             }
@@ -60,8 +62,11 @@ public class Arm extends SubsystemBase{
         armMotor.set(power);
     }
 
-
+    /*
     public void armUp() {
-        // armMotor.set(0.1);
+        while (armEncoder.getPosition() < maxEncoderValue) {
+            armMotor.set(0.25);
+        }
     }
+    */
 }

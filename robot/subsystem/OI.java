@@ -14,11 +14,13 @@ public class OI {
     public Joystick drivetrainController;
     public Joystick armController;
 
-    public double driveSpeedLimit = 1.0;
-    public double turnSpeedLimit = 0.8;
+    public double driveSpeedLimit = 0.65;
+    public double turnSpeedLimit = 0.5;
 
-    public double autonDriveSpeedLimit = 0.4;
-    public double autonTurnSpeedLimit = 0.3;
+    boolean aWasPressed = false;
+    boolean bWasPressed = false;
+    boolean xWasPressed = false;
+    boolean yWasPressed = false;
 
     private static OI instance = null;
     public static OI getInstance() {
@@ -29,12 +31,10 @@ public class OI {
     }
 
 
+
     public OI(){
         drivetrainController = new Joystick(0);
         armController = new Joystick(1);
-        
-        leftBumper = new JoystickButton(armController, 5);
-        rightBumper = new JoystickButton(armController, 6);
     }
 
 
@@ -50,10 +50,52 @@ public class OI {
         robotTurnSpeed = turnAxis * turnSpeedLimit;
     }
 
-    public void printSpeedLimits() {
+    public void updateSpeedLimits() {
+        if (drivetrainController.getRawButton(4)) {
+            if (yWasPressed == false) {
+                yWasPressed = true;
+                if (driveSpeedLimit < 1) {
+                    driveSpeedLimit += 0.05;
+                }
+            }
+        } else {
+            yWasPressed = false;
+        }
+
+
         if (drivetrainController.getRawButton(1)) {
-            System.out.println("Drive speed limit: " + driveSpeedLimit);
-            System.out.println("Turn speed limit: " + turnSpeedLimit);
-        }   
+            if (aWasPressed == false) {
+                aWasPressed = true;
+                if (driveSpeedLimit > 0) {
+                    driveSpeedLimit -= 0.05;
+                }
+            }
+        } else {
+            aWasPressed = false;
+        }
+
+
+        if (drivetrainController.getRawButton(2)) {
+            if (bWasPressed == false) {
+                bWasPressed = true;
+                if (turnSpeedLimit < 1) {
+                    turnSpeedLimit += 0.05;
+                }
+            }
+        } else {
+            bWasPressed = false;
+        }
+
+
+        if (drivetrainController.getRawButton(3)) {
+            if (xWasPressed == false) {
+                xWasPressed = true;
+                if (turnSpeedLimit > 0.5) {
+                    turnSpeedLimit -= 0.05;
+                }
+            }
+        } else {
+            xWasPressed = false;
+        }
     }
 }

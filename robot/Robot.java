@@ -9,14 +9,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.CommandGroup;
+//import frc.robot.commands.CommandGroup;
+//import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Drivetrain;
 import frc.robot.subsystem.Arm;
 import frc.robot.subsystem.Intake;
 
 import java.util.logging.LogManager;
-
-//import frc.robot.subsystem.OI;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,7 +30,6 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static Drivetrain drivetrain;
 
-  // public static Arm arm;
 
 
   public Robot() {}
@@ -90,7 +88,7 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kDefaultAuto:
       default:
-        CommandScheduler.getInstance().schedule(new CommandGroup()); 
+        //CommandScheduler.getInstance().schedule(new DriveCommand(-40)); 
       break;
     }
   }
@@ -98,6 +96,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+   
+    System.out.println("--------------------AUTONOMOUS--------------------");
+    drivetrain.DriveCommand(75);
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
   }
@@ -107,7 +108,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     System.out.println("--------------------TELEOP--------------------");
     drivetrain.resetGyro();
-    Arm.getInstance().armInit();
+    Arm.getInstance().resetEncoder();
   }
 
   /** This function is called periodically during operator control. */
@@ -123,6 +124,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drivetrain.stop();
+    Arm.getInstance().stop();
+    Intake.getInstance().stop();
   }
 
   /** This function is called periodically when disabled. */
