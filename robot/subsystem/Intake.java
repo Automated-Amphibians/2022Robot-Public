@@ -25,21 +25,21 @@ public class Intake extends SubsystemBase{
 
     public void intakePeriodic() {
         if (OI.getInstance().armController.getRawButton(5)) {
-            rollIn();
+            rollIn(0.75);
         } else if (OI.getInstance().armController.getRawButton(6)) {
-            rollOut();
+            rollOut(0.75);
         } else {
             stop();
         }
     }
 
 
-    public void rollOut() {
-        intakeMotor.set(ControlMode.PercentOutput, 0.75);
+    public void rollOut(double power) {
+        intakeMotor.set(ControlMode.PercentOutput, power);
     }
 
-    public void rollIn() {
-        intakeMotor.set(ControlMode.PercentOutput, -1);
+    public void rollIn(double power) {
+        intakeMotor.set(ControlMode.PercentOutput, -power);
     }
 
     public void stop() {

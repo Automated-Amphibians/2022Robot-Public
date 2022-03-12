@@ -32,22 +32,24 @@ public class Arm extends SubsystemBase{
         armEncoder = armMotor.getEncoder();
         armMotor.setIdleMode(IdleMode.kBrake);
     }
-
+    
     public void resetEncoder(){
         armEncoder.setPosition(0);
     }
-
+    
     public void stop() {
         armMotor.set(0);
     }
 
     public void armPeriodic() {
+        updateMaxEncoderValue();
+
         powerFactor = 0.275;
         power = -OI.getInstance().armController.getRawAxis(5) * powerFactor;
        
 
         if (OI.getInstance().armController.getRawButton(5)) {
-            power = -0.2;
+            power = -0.1;
         } else if (armEncoder.getPosition() <= 4 && armEncoder.getPosition() > 0) {
             if (power < 0) {
                 powerFactor = 0.025;

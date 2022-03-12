@@ -69,7 +69,7 @@ public class Drivetrain extends SubsystemBase{
         rightMaster.setSelectedSensorPosition(0);
         leftMaster.setSelectedSensorPosition(0);
         stabilizationSetPoint = 0.0;
-
+        
         try {
             navX = new AHRS(SPI.Port.kMXP);
           } catch (RuntimeException ex) {
@@ -130,7 +130,14 @@ public class Drivetrain extends SubsystemBase{
     
     public void DriveCommand(double inches) {
         distance = inches;
-        autonDrive(0.8, 0, distance);
+        autonDrive(0.4, 0, distance);
+    }
+
+
+    public void TurnCommand (double inches) {
+        distance = inches;
+        zeroSensors();
+        turnForInches(distance);
     }
 
     public void autonDrive(double velocity, double turnSpeed, double inches) {
@@ -224,6 +231,7 @@ public class Drivetrain extends SubsystemBase{
         SmartDashboard.putNumber("Turn Speed Limit", OI.getInstance().turnSpeedLimit);
 
         SmartDashboard.putNumber("Arm Encoder Position", Arm.getInstance().armEncoder.getPosition());
+        SmartDashboard.putNumber("Arm Encoder Max Value", Arm.getInstance().maxEncoderValue);
     }
     
     public void stop() {

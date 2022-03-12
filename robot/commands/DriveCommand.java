@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
-abstract class DriveCommand extends CommandBase {
+public class DriveCommand extends CommandBase {
     double distance;
     
     
