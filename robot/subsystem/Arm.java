@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase{
         } else if (armEncoder.getPosition() <= 4 && armEncoder.getPosition() > 0) {
             if (power < 0) {
                 powerFactor = 0.025;
-            } 
+            }
         } else if (armEncoder.getPosition() <= 0) {
             if (power < 0) {
                 powerFactor = 0;

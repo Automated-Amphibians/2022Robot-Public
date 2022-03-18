@@ -28,7 +28,7 @@ public class Drivetrain extends SubsystemBase{
     double targetRangeRight = 100;
     double targetRangeLeft = 100;
     double targetPosition = 0;
-    Intake intake;
+
 
     public Drivetrain() {
         leftMaster = new TalonSRX(3); 
@@ -59,7 +59,7 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.follow(rightMaster);
 
 
-        intake = new Intake();
+        // intake = new Intake();
 
 
         zeroSensors();
@@ -206,8 +206,6 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public boolean isAtTarget() {
-        //System.out.println(targetPosition);
-        
         return (Math.abs(leftMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition)) || (Math.abs(rightMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition));
     }
 

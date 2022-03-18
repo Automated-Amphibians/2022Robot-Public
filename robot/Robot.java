@@ -10,15 +10,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-//import frc.robot.commands.CommandGroup;
-//import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Drivetrain;
-import frc.robot.commands.Auton1;
 import frc.robot.subsystem.Arm;
 import frc.robot.subsystem.Intake;
 
-import java.sql.Time;
+import edu.wpi.first.cameraserver.CameraServer;
+// import edu.wpi.first.wpilibj.IterativeRobotBase;
+
 import java.util.logging.LogManager;
 
 /**
@@ -49,6 +47,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     drivetrain = new Drivetrain();
     
+    CameraServer.startAutomaticCapture();
 
     try {
       LogManager.getLogManager().reset();
@@ -99,26 +98,28 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during autonomous. */
+
+
+  // <<<---------------------- A U T O N 1 ---------------------->>>
   double startTimestamp = 0;
   boolean turned, driven = false;
+  // <<<---------------------- A U T O N 1 ---------------------->>>
+
   @Override
   public void autonomousPeriodic() {
    
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // -------------------------------------------------------A U T O N 1-------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
     if (startTimestamp == 0) {
       startTimestamp = Timer.getFPGATimestamp();
     }
-
-    //System.out.println("--------------------AUTONOMOUS--------------------");
-    //Intake.getInstance().rollIn(0.5);
-    // Intake.getInstance().rollOut(0.75);
-    // drivetrain.TurnCommand(48);
-    // // drivetrain.DriveCommand(75);
     
-    // If it doesnt work, just comment these following lines out // Just drive out
-    Intake.getInstance().rollOut(0.5);
+    Intake.getInstance().rollOut(1);
 
     if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned) {
-      drivetrain.DriveCommand(85);
+      drivetrain.DriveCommand(120);
       if (!driven){
         Arm.getInstance().armMotor.set(-0.025);
         driven = true;
@@ -128,14 +129,13 @@ public class Robot extends TimedRobot {
         turned = true;
     }
 
-    // Arm.getInstance().armMotor.set(-0.025);
-    // drivetrain.DriveCommand(75);
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // -------------------------------------------------------A U T O N 1-------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
-
-    
   }
 
   /** This function is called once when teleop is enabled. */
