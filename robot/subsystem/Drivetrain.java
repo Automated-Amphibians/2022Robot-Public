@@ -25,8 +25,8 @@ public class Drivetrain extends SubsystemBase{
     boolean isTurning = false;
 
     private final double clicksPerInch = 4096 / (6 * Math.PI);
-    double targetRangeRight = 100;
-    double targetRangeLeft = 100;
+    // double targetRangeRight = 100;
+    // double targetRangeLeft = 100;
     double targetPosition = 0;
 
 
@@ -44,6 +44,7 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.setNeutralMode(NeutralMode.Brake);
         leftMaster.setNeutralMode(NeutralMode.Brake);
         leftFollower.setNeutralMode(NeutralMode.Brake);
+        
 
         // rightMaster and leftMaster are motor controllers that are connected to the encoders
         rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -57,10 +58,6 @@ public class Drivetrain extends SubsystemBase{
 
         leftFollower.follow(leftMaster);
         rightFollower.follow(rightMaster);
-
-
-        // intake = new Intake();
-
 
         zeroSensors();
     }
@@ -90,6 +87,13 @@ public class Drivetrain extends SubsystemBase{
               navX.zeroYaw();
             }
         }
+    }
+
+
+    public void resetDrivetrainEncoder() {
+        rightMaster.setSelectedSensorPosition(0);
+        leftMaster.setSelectedSensorPosition(0);
+        stabilizationSetPoint = 0.0;
     }
 
     public void arcadeDrive(double velocity, double turnSpeed) {
@@ -130,7 +134,7 @@ public class Drivetrain extends SubsystemBase{
     
     public void DriveCommand(double inches) {
         distance = inches;
-        autonDrive(0.4, 0, distance);
+        autonDrive(0.5, 0, distance);
     }
 
 
@@ -189,15 +193,6 @@ public class Drivetrain extends SubsystemBase{
             stop();
         }
     }
-
-    /*
-    public void driveForInches(double inches) {
-        targetPosition = inches * clicksPerInch;
-
-        leftMaster.set(ControlMode.Position, targetPosition);
-        rightMaster.set(ControlMode.Position, targetPosition);
-    }
-    */
 
     public void turnForInches(double inches) {
         targetPosition = inches * clicksPerInch;

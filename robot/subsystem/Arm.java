@@ -13,7 +13,7 @@ public class Arm extends SubsystemBase{
 
     double power;
     double powerFactor;
-    double maxEncoderValue = 19;
+    double maxEncoderValue = 20.5;
 
     private boolean yWasPressed;
     private boolean aWasPressed;
@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase{
     public void armPeriodic() {
         updateMaxEncoderValue();
 
-        powerFactor = 0.275;
+        powerFactor = 0.625;
         power = -OI.getInstance().armController.getRawAxis(5) * powerFactor;
        
 

@@ -15,7 +15,6 @@ import frc.robot.subsystem.Arm;
 import frc.robot.subsystem.Intake;
 
 import edu.wpi.first.cameraserver.CameraServer;
-// import edu.wpi.first.wpilibj.IterativeRobotBase;
 
 import java.util.logging.LogManager;
 
@@ -100,38 +99,62 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
 
 
-  // <<<---------------------- A U T O N 1 ---------------------->>>
   double startTimestamp = 0;
-  boolean turned, driven = false;
+  // <<<---------------------- A U T O N 1 ---------------------->>>
+  boolean turned1, armDown, driven1, pickedUpBall, turned2, armUp, driven2 = false;
   // <<<---------------------- A U T O N 1 ---------------------->>>
 
   @Override
   public void autonomousPeriodic() {
-   
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    // -------------------------------------------------------A U T O N 1-------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
+    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
+    
     if (startTimestamp == 0) {
       startTimestamp = Timer.getFPGATimestamp();
     }
     
-    Intake.getInstance().rollOut(1);
 
-    if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned) {
+    if (Timer.getFPGATimestamp() - startTimestamp > 13 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && driven2) {
+      Intake.getInstance().rollOut(0.8);
+      Arm.getInstance().armMotor.set(0);
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 10.75 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && !driven2) {
+      drivetrain.DriveCommand(40);
+      driven2 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 9.25 && turned1 && armDown && driven1 && pickedUpBall && turned2 && !armUp && !driven2) {
+      Arm.getInstance().armMotor.set(0.4);
+      armUp = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp >6.5 && turned1 && armDown && driven1 && pickedUpBall && !turned2 && !armUp && !driven2) {
+      drivetrain.TurnCommand(-75);
+      Intake.getInstance().stop();
+      turned2 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 5.5 && turned1 && armDown && driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+      Intake.getInstance().rollIn(0.7);
+      pickedUpBall = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 4.5 && turned1 && armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
       drivetrain.DriveCommand(120);
-      if (!driven){
-        Arm.getInstance().armMotor.set(-0.025);
-        driven = true;
-      }
-    } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && !turned) {
-        drivetrain.TurnCommand(42);
-        turned = true;
+      Arm.getInstance().stop();
+      driven1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 1.5 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+        drivetrain.TurnCommand(37);
+
+        if (!armDown){
+          Arm.getInstance().armMotor.set(-0.03);
+          armDown = true;
+        }
+
+        Intake.getInstance().stop();;
+        turned1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp < 1 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+      Intake.getInstance().rollOut(1);
     }
 
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    // -------------------------------------------------------A U T O N 1-------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    
+
+
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
     drivetrain.periodic();
