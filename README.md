@@ -1,1 +1,9 @@
-The robot moves pretty well. The arm and intake also works really well. The autonomous routine could be improved a bit more. Right now during autonomous, the robot will drop the ball from the intake, turn around clockwise ~180 degrees and move forward out of the tarmac. The climber should also be improved. Ideally the robot should be able to climb to the transversal bar, but that might be too hard. By the next competition, the robot should at least be able to climb to the high bar. We also might not be able to improve the intake much.
+The robot still turns randomly when trying to move forward (same problem as before)
+
+Autonomous 1: drop the cargo, turn around ~180 degrees, and move forward out of the tarmac
+
+Autonomous 2: drop the cargo, turn around ~180 degrees, lower the arm, move forward, pick up another cargo, turn around ~180 degrees, raise the arm, move forward and score
+
+Note: The drive speed in autonomous should be 40%, otherwise some calculations will be off
+
+Autonomous 3 (work in progress): lower the arm, move forward out of the tarmac, pick another cargo, turn around ~180 degrees, raise the arm, move forward and score
