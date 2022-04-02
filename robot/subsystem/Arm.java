@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
+// import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arm extends SubsystemBase{
@@ -13,7 +13,7 @@ public class Arm extends SubsystemBase{
 
     double power;
     double powerFactor;
-    double maxEncoderValue = 19;
+    double maxEncoderValue = 20.5;
 
     private boolean yWasPressed;
     private boolean aWasPressed;
@@ -30,7 +30,6 @@ public class Arm extends SubsystemBase{
     public Arm() {
         armMotor = new CANSparkMax(10, MotorType.kBrushless);
         armEncoder = armMotor.getEncoder();
-        armMotor.setIdleMode(IdleMode.kBrake);
     }
     
     public void resetEncoder(){
@@ -44,7 +43,7 @@ public class Arm extends SubsystemBase{
     public void armPeriodic() {
         updateMaxEncoderValue();
 
-        powerFactor = 0.275;
+        powerFactor = 0.625;
         power = -OI.getInstance().armController.getRawAxis(5) * powerFactor;
        
 
@@ -53,7 +52,7 @@ public class Arm extends SubsystemBase{
         } else if (armEncoder.getPosition() <= 4 && armEncoder.getPosition() > 0) {
             if (power < 0) {
                 powerFactor = 0.025;
-            } 
+            }
         } else if (armEncoder.getPosition() <= 0) {
             if (power < 0) {
                 powerFactor = 0;

@@ -1,15 +1,11 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 public class OI {
     public double robotVelocity;
     public double robotTurnSpeed;
-    
-    public JoystickButton leftBumper;
-    public JoystickButton rightBumper;
     
     public Joystick drivetrainController;
     public Joystick armController;
@@ -90,7 +86,7 @@ public class OI {
         if (drivetrainController.getRawButton(3)) {
             if (xWasPressed == false) {
                 xWasPressed = true;
-                if (turnSpeedLimit > 0.5) {
+                if (turnSpeedLimit > 0.05) {
                     turnSpeedLimit -= 0.05;
                 }
             }

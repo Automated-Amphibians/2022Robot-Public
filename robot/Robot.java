@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-//import frc.robot.commands.CommandGroup;
-//import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Drivetrain;
-import frc.robot.commands.Auton1;
 import frc.robot.subsystem.Arm;
 import frc.robot.subsystem.Intake;
+import com.revrobotics.CANSparkMax.IdleMode;
 
-import java.sql.Time;
+import edu.wpi.first.cameraserver.CameraServer;
+
 import java.util.logging.LogManager;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     drivetrain = new Drivetrain();
     
+    CameraServer.startAutomaticCapture();
 
     try {
       LogManager.getLogManager().reset();
@@ -67,6 +68,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {}
 
+  public int loopNum = 0;
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -87,6 +89,11 @@ public class Robot extends TimedRobot {
 
     drivetrain.resetGyro();
     drivetrain.zeroSensors();
+    drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
+    drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
+    drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
+    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
+    Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
 
     switch (m_autoSelected) {
       case kDefaultAuto:
@@ -99,43 +106,144 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during autonomous. */
+
+
   double startTimestamp = 0;
-  boolean turned, driven = false;
+  // <<<---------------------- A U T O N 1 ---------------------->>>
+  boolean turned1, armDown, driven1, pickedUpBall, turned2, armUp, driven2 = false;
+  // <<<---------------------- A U T O N 1 ---------------------->>>
+
   @Override
   public void autonomousPeriodic() {
-   
     if (startTimestamp == 0) {
       startTimestamp = Timer.getFPGATimestamp();
     }
 
-    //System.out.println("--------------------AUTONOMOUS--------------------");
-    //Intake.getInstance().rollIn(0.5);
-    // Intake.getInstance().rollOut(0.75);
-    // drivetrain.TurnCommand(48);
-    // // drivetrain.DriveCommand(75);
-    
-    // If it doesnt work, just comment these following lines out // Just drive out
-    Intake.getInstance().rollOut(0.5);
 
-    if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned) {
-      drivetrain.DriveCommand(85);
-      if (!driven){
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
+    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
+
+
+    // Drops thet ball into the lower hub, turn around, drive out of the tarmac and lower the arm
+
+    /*
+    if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1) {
+      drivetrain.DriveCommand(120);
+      if (!driven1){
         Arm.getInstance().armMotor.set(-0.025);
-        driven = true;
+        driven1 = true;
       }
-    } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && !turned) {
-        drivetrain.TurnCommand(42);
-        turned = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && !turned1) {
+        drivetrain.TurnCommand(40);
+        Intake.getInstance().stop();
+        turned1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !turned1) {
+      Intake.getInstance().rollOut(1);
     }
+    */
 
-    // Arm.getInstance().armMotor.set(-0.025);
-    // drivetrain.DriveCommand(75);
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
+    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
+
+
+
+
+
+
+
+
+
+
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
+    // ------------------------------------------------------------A U T O N 2------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
+    
+
+    // Drop the cargo, turn around 180 degrees, move forward, pick up another cargo, turn back 180 degrees, move forward and score
+
+    
+    if (Timer.getFPGATimestamp() - startTimestamp > 13 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && driven2) {
+      Intake.getInstance().rollOut(0.8);
+      Arm.getInstance().armMotor.set(0);
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 10.5 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && !driven2) {
+      drivetrain.DriveCommand(80);
+      driven2 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 8.75 && turned1 && armDown && driven1 && pickedUpBall && turned2 && !armUp && !driven2) {
+      Arm.getInstance().armMotor.set(0.4);
+      armUp = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 6 && turned1 && armDown && driven1 && pickedUpBall && !turned2 && !armUp && !driven2) {
+      drivetrain.TurnCommand(-40);
+      Intake.getInstance().stop();
+      turned2 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1 && armDown && driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+      Intake.getInstance().rollIn(0.7);
+      pickedUpBall = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 4 && turned1 && armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+      drivetrain.DriveCommand(120);
+      Arm.getInstance().stop();
+      driven1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp > 1.5 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+        drivetrain.TurnCommand(36);
+
+        if (!armDown){
+          Arm.getInstance().armMotor.set(-0.05);
+          armDown = true;
+        }
+
+        Intake.getInstance().stop();;
+        turned1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp < 1 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
+      Intake.getInstance().rollOut(1);
+    } else {
+      System.out.println("ELSE");
+    }
+    
+    
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // ------------------------------------------------------------A U T O N 2------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+
+
+
+
+
+
+
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // ------------------------------------------------------------A U T O N 3------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+
+    /*
+    if (Timer.getFPGATimestamp() - startTimestamp > 2 && armDown && !driven1) {
+      drivetrain.DriveCommand(80);
+      Arm.getInstance().armMotor.set(-0.05);
+      driven1 = true;
+    } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !armDown && !driven1) {
+      Arm.getInstance().armMotor.set(-0.05);
+      armDown = true;
+    }
+    */
+    
+
+
+
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    // ------------------------------------------------------------A U T O N 3------------------------------------------------------------
+    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+    loopNum++;
 
 
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
-
-    
   }
 
   /** This function is called once when teleop is enabled. */
@@ -143,9 +251,16 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     System.out.println("--------------------TELEOP--------------------");
     drivetrain.resetGyro();
+    drivetrain.resetDrivetrainEncoder();
     Intake.getInstance().stop();     // We might not need this line
     Arm.getInstance().stop();        // We might not need this line
     Arm.getInstance().armEncoder.setPosition(0);
+
+    drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
+    drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
+    drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
+    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
+    Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
   }
 
   /** This function is called periodically during operator control. */
@@ -163,6 +278,12 @@ public class Robot extends TimedRobot {
     drivetrain.stop();
     Arm.getInstance().stop();
     Intake.getInstance().stop();
+
+    drivetrain.leftMaster.setNeutralMode(NeutralMode.Coast);
+    drivetrain.leftFollower.setNeutralMode(NeutralMode.Coast);
+    drivetrain.rightMaster.setNeutralMode(NeutralMode.Coast);
+    drivetrain.rightFollower.setNeutralMode(NeutralMode.Coast);
+    Arm.getInstance().armMotor.setIdleMode(IdleMode.kCoast);
   }
 
   /** This function is called periodically when disabled. */

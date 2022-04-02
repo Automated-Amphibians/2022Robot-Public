@@ -2,7 +2,7 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+// import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase{
-    private TalonSRX leftMaster;
-    private TalonSRX leftFollower;
-    private TalonSRX rightMaster;
-    private TalonSRX rightFollower;   
+    public TalonSRX leftMaster;
+    public TalonSRX leftFollower;
+    public TalonSRX rightMaster;
+    public TalonSRX rightFollower;   
     double distance; 
 
     AHRS navX;
@@ -25,10 +25,10 @@ public class Drivetrain extends SubsystemBase{
     boolean isTurning = false;
 
     private final double clicksPerInch = 4096 / (6 * Math.PI);
-    double targetRangeRight = 100;
-    double targetRangeLeft = 100;
+    // double targetRangeRight = 100;
+    // double targetRangeLeft = 100;
     double targetPosition = 0;
-    Intake intake;
+
 
     public Drivetrain() {
         leftMaster = new TalonSRX(3); 
@@ -39,11 +39,7 @@ public class Drivetrain extends SubsystemBase{
         // Motors on the right are running in the opposite direction of the direction that they are suppose to go
         rightMaster.setInverted(true);
         rightFollower.setInverted(true);
-
-        rightMaster.setNeutralMode(NeutralMode.Brake);
-        rightFollower.setNeutralMode(NeutralMode.Brake);
-        leftMaster.setNeutralMode(NeutralMode.Brake);
-        leftFollower.setNeutralMode(NeutralMode.Brake);
+        
 
         // rightMaster and leftMaster are motor controllers that are connected to the encoders
         rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -57,10 +53,6 @@ public class Drivetrain extends SubsystemBase{
 
         leftFollower.follow(leftMaster);
         rightFollower.follow(rightMaster);
-
-
-        intake = new Intake();
-
 
         zeroSensors();
     }
@@ -90,6 +82,13 @@ public class Drivetrain extends SubsystemBase{
               navX.zeroYaw();
             }
         }
+    }
+
+
+    public void resetDrivetrainEncoder() {
+        rightMaster.setSelectedSensorPosition(0);
+        leftMaster.setSelectedSensorPosition(0);
+        stabilizationSetPoint = 0.0;
     }
 
     public void arcadeDrive(double velocity, double turnSpeed) {
@@ -190,15 +189,6 @@ public class Drivetrain extends SubsystemBase{
         }
     }
 
-    /*
-    public void driveForInches(double inches) {
-        targetPosition = inches * clicksPerInch;
-
-        leftMaster.set(ControlMode.Position, targetPosition);
-        rightMaster.set(ControlMode.Position, targetPosition);
-    }
-    */
-
     public void turnForInches(double inches) {
         targetPosition = inches * clicksPerInch;
         leftMaster.set(ControlMode.Position, targetPosition);
@@ -206,8 +196,6 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public boolean isAtTarget() {
-        //System.out.println(targetPosition);
-        
         return (Math.abs(leftMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition)) || (Math.abs(rightMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition));
     }
 
