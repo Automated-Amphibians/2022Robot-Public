@@ -13,8 +13,9 @@ public class Arm extends SubsystemBase{
 
     double power;
     double powerFactor;
-    double maxEncoderValue = 20.5;
+    double maxArmEncoderValue = 20.5;
 
+    private boolean xWasPressed;
     private boolean yWasPressed;
     private boolean aWasPressed;
 
@@ -32,7 +33,7 @@ public class Arm extends SubsystemBase{
         armEncoder = armMotor.getEncoder();
     }
     
-    public void resetEncoder(){
+    public void resetEncoderValues(){
         armEncoder.setPosition(0);
     }
     
@@ -41,7 +42,7 @@ public class Arm extends SubsystemBase{
     }
 
     public void armPeriodic() {
-        updateMaxEncoderValue();
+        updateArmEncoderValue();
 
         powerFactor = 0.625;
         power = -OI.getInstance().armController.getRawAxis(5) * powerFactor;
@@ -57,7 +58,7 @@ public class Arm extends SubsystemBase{
             if (power < 0) {
                 powerFactor = 0;
             }
-        } else if (armEncoder.getPosition() >= maxEncoderValue) {
+        } else if (armEncoder.getPosition() >= maxArmEncoderValue) {
             if (power > 0) {
                 power = 0;
             }
@@ -66,11 +67,11 @@ public class Arm extends SubsystemBase{
         armMotor.set(power);
     }
 
-    public void updateMaxEncoderValue() {
+    public void updateArmEncoderValue() {
         if (OI.getInstance().armController.getRawButton(4)) {
             if (yWasPressed == false) {
                 yWasPressed = true;
-                maxEncoderValue += 0.5;
+                maxArmEncoderValue += 0.5;
             }
         } else {
             yWasPressed = false;
@@ -80,10 +81,20 @@ public class Arm extends SubsystemBase{
         if (OI.getInstance().armController.getRawButton(1)) {
             if (aWasPressed == false) {
                 aWasPressed = true;
-                maxEncoderValue -= 0.5;
+                maxArmEncoderValue -= 0.5;
             }
         } else {
             aWasPressed = false;
+        }
+
+
+        if (OI.getInstance().armController.getRawButton(3)) {
+            if (xWasPressed == false) {
+                xWasPressed = true;
+                resetEncoderValues();
+            }
+        } else {
+            xWasPressed = false;
         }
     }
 }

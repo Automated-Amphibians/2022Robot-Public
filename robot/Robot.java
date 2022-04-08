@@ -53,6 +53,8 @@ public class Robot extends TimedRobot {
     
     CameraServer.startAutomaticCapture();
 
+    Climber.getInstance().resetEncoder();
+
     try {
       LogManager.getLogManager().reset();
     } catch (Exception exception) {
@@ -68,7 +70,9 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    drivetrain.periodic();
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -94,6 +98,9 @@ public class Robot extends TimedRobot {
     drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
     drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
+    Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kBrake);
+    Climber.getInstance().resetEncoder();
+    Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Brake);
 
     switch (m_autoSelected) {
       case kDefaultAuto:
@@ -233,7 +240,7 @@ public class Robot extends TimedRobot {
       Arm.getInstance().armMotor.set(0.4);
       armUp = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 5 && armDown && driven1 && pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
-      drivetrain.turnForInches(38);
+      drivetrain.turnForInches(43.5);
       turned1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 4 && armDown && driven1 && pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
       drivetrain.stop();
@@ -269,13 +276,16 @@ public class Robot extends TimedRobot {
     drivetrain.resetDrivetrainEncoder();
     Intake.getInstance().stop();     // We might not need this line
     Arm.getInstance().stop();        // We might not need this line
-    Arm.getInstance().armEncoder.setPosition(0);
+    Arm.getInstance().resetEncoderValues();
+    Climber.getInstance().resetEncoder();
 
     drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
     drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
     drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
     drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
+    Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kBrake);
+    Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   /** This function is called periodically during operator control. */
@@ -300,6 +310,8 @@ public class Robot extends TimedRobot {
     drivetrain.rightMaster.setNeutralMode(NeutralMode.Coast);
     drivetrain.rightFollower.setNeutralMode(NeutralMode.Coast);
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kCoast);
+    Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kCoast);
+    Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Coast);
   }
 
   /** This function is called periodically when disabled. */

@@ -219,7 +219,9 @@ public class Drivetrain extends SubsystemBase{
         SmartDashboard.putNumber("Turn Speed Limit", OI.getInstance().turnSpeedLimit);
 
         SmartDashboard.putNumber("Arm Encoder Position", Arm.getInstance().armEncoder.getPosition());
-        SmartDashboard.putNumber("Arm Encoder Max Value", Arm.getInstance().maxEncoderValue);
+        SmartDashboard.putNumber("Arm Encoder Max Value", Arm.getInstance().maxArmEncoderValue);
+
+        SmartDashboard.putNumber("Climber Rotation Encoder", Climber.getInstance().rMEncoder.getPosition());
     }
     
     public void stop() {
