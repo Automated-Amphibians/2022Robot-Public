@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystem.Drivetrain;
 import frc.robot.subsystem.Arm;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Intake;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -283,6 +285,7 @@ public class Robot extends TimedRobot {
     drivetrain.teleopPeriodic();
     Arm.getInstance().armPeriodic();
     Intake.getInstance().intakePeriodic();
+    Climber.getInstance().climberPeriodic();
   }
 
   /** This function is called once when the robot is disabled. */
