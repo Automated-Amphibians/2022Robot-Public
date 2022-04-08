@@ -1,3 +1,5 @@
+STILL NEED TO TEST NEO 550
+
 The robot still turns randomly when trying to move forward (same problem as before)
 
 Autonomous 1: drop the cargo, turn around ~180 degrees, and move forward out of the tarmac
