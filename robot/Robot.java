@@ -14,6 +14,7 @@ import frc.robot.subsystem.Drivetrain;
 import frc.robot.subsystem.Arm;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Intake;
+import frc.robot.subsystem.OI;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -71,7 +72,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    drivetrain.periodic();
+    Climber.getInstance().climberDemand = -OI.getInstance().armController.getRawAxis(1);
+    //System.out.println("Climber Demand: " + Climber.getInstance().climberDemand);
+    Climber.getInstance().climberDemand = Math.abs(Climber.getInstance().climberDemand) < 0.01 ? 0 : Climber.getInstance().climberDemand;
+    SmartDashboard.putNumber("Climber Demand", Climber.getInstance().climberDemand);
   }
 
   /**

@@ -13,6 +13,8 @@ public class Climber extends SubsystemBase{
     public CANSparkMax rotationMotor;
     public RelativeEncoder rMEncoder;
     public VictorSPX extensionMotor;
+
+    public double climberDemand;
     
 
     private static Climber instance = null;
@@ -27,7 +29,7 @@ public class Climber extends SubsystemBase{
     public Climber() {
         rotationMotor = new CANSparkMax(11, MotorType.kBrushless);
         rMEncoder = rotationMotor.getEncoder();
-        extensionMotor = new VictorSPX(6);    // Still needs to set the motor ID
+        extensionMotor = new VictorSPX(6);
     }
 
     public void resetEncoder() {
@@ -35,23 +37,30 @@ public class Climber extends SubsystemBase{
     }
 
     public void climberPeriodic() {
+        climberDemand = OI.getInstance().armController.getRawAxis(1);    // Check if this works first
+        climberDemand = Math.abs(climberDemand) < 0.01 ? 0 : climberDemand;
+        System.out.println("Climber Demand: " + climberDemand);
+
+
+        extensionMotor.set(ControlMode.PercentOutput, climberDemand);
+
+        /*
         if (OI.getInstance().armController.getPOV() == 0) {
             // Extend the climber
-            extensionMotor.set(ControlMode.PercentOutput, 0.3);    // Needs to see if positive demand will extend or shrink the arm
+            extensionMotor.set(ControlMode.PercentOutput, 0.3);
         } else if (OI.getInstance().armController.getPOV() == 180) {
             // Shrink the climber
             extensionMotor.set(ControlMode.PercentOutput, -0.3);
         } else if (OI.getInstance().armController.getRawButton(2)) {
             extensionMotor.set(ControlMode.PercentOutput, -0.9);
-        } 
-        else {
+        } else {
             // Stop the climber extension
             extensionMotor.set(ControlMode.PercentOutput, 0);
         }
-
+        */
         
 
-        if (OI.getInstance().drivetrainController.getPOV() == 90) {    //  && rMEncoder.getPosition() <= 15
+        if (OI.getInstance().drivetrainController.getPOV() == 90) {
             // Rotate climber toward the robot
             rotationMotor.set(0.15);
         } else if (OI.getInstance().drivetrainController.getPOV() == 270 && rMEncoder.getPosition() > 0) {
@@ -61,6 +70,5 @@ public class Climber extends SubsystemBase{
             // Stop rotating
             rotationMotor.set(0);
         }
-
     }
 }
