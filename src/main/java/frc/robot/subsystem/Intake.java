@@ -24,9 +24,9 @@ public class Intake extends SubsystemBase{
 
 
     public void intakePeriodic() {
-        if (OI.getInstance().armController.getRawButton(5)) {
+        if (OI.getInstance().armController.getLeftBumper()) {
             rollIn(0.75);
-        } else if (OI.getInstance().armController.getRawButton(6)) {
+        } else if (OI.getInstance().armController.getLeftTriggerAxis() == 1) {
             rollOut(1);
         } else {
             stop();

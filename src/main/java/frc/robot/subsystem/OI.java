@@ -1,14 +1,14 @@
 package frc.robot.subsystem;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 
 
 public class OI {
     public double robotVelocity;
     public double robotTurnSpeed;
     
-    public Joystick drivetrainController;
-    public Joystick armController;
+    public XboxController drivetrainController;
+    public XboxController armController;
 
     public double driveSpeedLimit = 0.65;
     public double turnSpeedLimit = 0.5;
@@ -29,8 +29,8 @@ public class OI {
 
 
     public OI(){
-        drivetrainController = new Joystick(0);
-        armController = new Joystick(1);
+        drivetrainController = new XboxController(0);
+        armController = new XboxController(1);
     }
 
 
