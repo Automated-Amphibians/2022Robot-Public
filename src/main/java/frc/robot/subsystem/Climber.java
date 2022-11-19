@@ -39,8 +39,15 @@ public class Climber extends SubsystemBase{
     public void climberPeriodic() {
         climberDemand = OI.getInstance().armController.getRawAxis(1);    // Check if this works first
         climberDemand = Math.abs(climberDemand) < 0.01 ? 0 : climberDemand;
-        System.out.println("Climber Demand: " + climberDemand);
+        //System.out.println("Climber Demand: " + climberDemand);
 
+        // example, remove later
+        for (int x=0;x<6;x++) {
+            if (OI.getInstance().armController.getRawButton(x)) {
+                System.out.println("Hello "+x);
+            }
+        }
+        //System.out.println("climber");
 
         extensionMotor.set(ControlMode.PercentOutput, climberDemand);
 
