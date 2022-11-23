@@ -9,8 +9,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Intake extends SubsystemBase{
     public static TalonSRX intakeMotor;
 
-
     private static Intake instance = null;
+    
     public static Intake getInstance() {
         if (instance == null) {
             instance = new Intake();

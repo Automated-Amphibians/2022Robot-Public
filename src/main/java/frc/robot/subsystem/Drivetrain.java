@@ -127,13 +127,13 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.set(ControlMode.PercentOutput, right);    
     }
     
-    public void DriveCommand(double inches) {
+    public void driveCommand(double inches) {
         distance = inches;
         autonDrive(0.4, 0, distance);
     }
 
 
-    public void TurnCommand (double inches) {
+    public void turnCommand (double inches) {
         distance = inches;
         zeroSensors();
         turnForInches(distance);

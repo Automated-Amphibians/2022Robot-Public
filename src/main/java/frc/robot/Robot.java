@@ -124,78 +124,47 @@ public class Robot extends TimedRobot {
   boolean turned1, armDown, driven1, pickedUpBall, turned2, armUp, driven2, isFinish = false;
   // <<<---------------------- A U T O N 1 ---------------------->>>
 
-  @Override
-  public void autonomousPeriodic() {
-    if (startTimestamp == 0) {
-      startTimestamp = Timer.getFPGATimestamp();
-    }
-
-
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
-    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
-
-
-    // Drops thet ball into the lower hub, turn around, drive out of the tarmac and lower the arm
-
-    /*
+  // Drops thet ball into the lower hub, turn around, drive out of the tarmac and lower the arm
+  public void auton1() {
     if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1) {
-      drivetrain.DriveCommand(120);
+      drivetrain.driveCommand(120);
       if (!driven1){
         Arm.getInstance().armMotor.set(-0.025);
         driven1 = true;
       }
     } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && !turned1) {
-        drivetrain.TurnCommand(40);
+        drivetrain.turnCommand(40);
         Intake.getInstance().stop();
         turned1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !turned1) {
       Intake.getInstance().rollOut(1);
     }
-    */
+  }
 
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
-    // ------------------------------------------------------------A U T O N 1------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
-
-
-
-
-
-
-
-
-
-
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxXXXXXXX
-    // ------------------------------------------------------------A U T O N 2------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx
-    
-    // Drop the cargo, turn around 180 degrees, move forward, pick up another cargo, turn back 180 degrees, move forward and score
-
-    /*
+  // Drop the cargo, turn around 180 degrees, move forward, pick up another cargo, turn back 180 degrees, move forward and score
+  public void auton2() {
     if (Timer.getFPGATimestamp() - startTimestamp > 13.5 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && driven2) {
       Intake.getInstance().rollOut(0.8);
       Arm.getInstance().armMotor.set(0);
     } else if (Timer.getFPGATimestamp() - startTimestamp > 10.5 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && !driven2) {
-      drivetrain.DriveCommand(80);
+      drivetrain.driveCommand(80);
       driven2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 8.75 && turned1 && armDown && driven1 && pickedUpBall && turned2 && !armUp && !driven2) {
       Arm.getInstance().armMotor.set(0.4);
       armUp = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 6 && turned1 && armDown && driven1 && pickedUpBall && !turned2 && !armUp && !driven2) {
-      drivetrain.TurnCommand(-40);
+      drivetrain.turnCommand(-40);
       Intake.getInstance().stop();
       turned2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1 && armDown && driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
       Intake.getInstance().rollIn(0.7);
       pickedUpBall = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 4 && turned1 && armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
-      drivetrain.DriveCommand(120);
+      drivetrain.driveCommand(120);
       Arm.getInstance().stop();
       driven1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 1.5 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
-        drivetrain.TurnCommand(36);
+        drivetrain.turnCommand(36);
 
         if (!armDown){
           Arm.getInstance().armMotor.set(-0.05);
@@ -209,27 +178,15 @@ public class Robot extends TimedRobot {
     } else {
       System.out.println("ELSE");
     }
-    */
-    
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    // ------------------------------------------------------------A U T O N 2------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  }
 
-
-
-
-
-
-
-
-
-
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    // ------------------------------------------------------------A U T O N 3------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-    
+  @Override
+  public void autonomousPeriodic() {
+    if (startTimestamp == 0) {
+      startTimestamp = Timer.getFPGATimestamp();
+    }
+    // auton1();
+    // auton2();    
     if (Timer.getFPGATimestamp() - startTimestamp > 11 && armDown && driven1 && pickedUpBall && turned1 && armUp && driven2 && isFinish) {
       Intake.getInstance().stop();
       drivetrain.stop();
@@ -238,7 +195,7 @@ public class Robot extends TimedRobot {
       Arm.getInstance().armMotor.set(0);
       isFinish = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 8 && armDown && driven1 && pickedUpBall && turned1 && armUp && !driven2 && !isFinish) {
-      drivetrain.DriveCommand(120);
+      drivetrain.driveCommand(120);
       driven2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 7 && armDown && driven1 && pickedUpBall && turned1 && !armUp && !driven2 && !isFinish) {
       Arm.getInstance().armMotor.set(0.4);
@@ -253,20 +210,13 @@ public class Robot extends TimedRobot {
       Intake.getInstance().rollIn(0.85);
       pickedUpBall = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && armDown && !driven1 && !pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
-      drivetrain.DriveCommand(80);
+      drivetrain.driveCommand(80);
       Arm.getInstance().armMotor.set(0);
       driven1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !armDown && !driven1 && !pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
       Arm.getInstance().armMotor.set(-0.05);
       armDown = true;
     }
-    
-
-
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    // ------------------------------------------------------------A U T O N 3------------------------------------------------------------
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 
     drivetrain.periodic();
     CommandScheduler.getInstance().run();
