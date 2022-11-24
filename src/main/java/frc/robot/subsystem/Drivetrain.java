@@ -84,7 +84,6 @@ public class Drivetrain extends SubsystemBase{
         }
     }
 
-
     public void resetDrivetrainEncoder() {
         rightMaster.setSelectedSensorPosition(0);
         leftMaster.setSelectedSensorPosition(0);

@@ -2,7 +2,9 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj.XboxController;
 
-
+/**
+ * Operator interface class for Teleop mode.
+ */
 public class OI {
     public double robotVelocity;
     public double robotTurnSpeed;
@@ -19,6 +21,7 @@ public class OI {
     private boolean yWasPressed = false;
 
     private static OI instance = null;
+    
     public static OI getInstance() {
         if (instance == null) {
             instance = new OI();
@@ -26,14 +29,10 @@ public class OI {
         return instance;
     }
 
-
-
     public OI(){
         drivetrainController = new XboxController(0);
         armController = new XboxController(1);
     }
-
-
 
     public void updateInputs() {
         double drivetrainAxis = drivetrainController.getRawAxis(1) ;

@@ -33,7 +33,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
+  
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static Drivetrain drivetrain;
 
@@ -90,10 +90,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-     System.out.println("--------------------AUTONOMOUS--------------------");
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+     System.out.println("--------------------AUTONOMOUS--------------------");    
 
     drivetrain.resetGyro();
     drivetrain.zeroSensors();
@@ -106,14 +103,7 @@ public class Robot extends TimedRobot {
     Climber.getInstance().resetEncoder();
     Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Brake);
 
-    switch (m_autoSelected) {
-      case kDefaultAuto:
-        // CommandScheduler.getInstance().schedule(new Auton1()); 
-        break;
-      default:
-        // CommandScheduler.getInstance().schedule(new Auton1()); 
-        break;
-    }
+    
   }
 
   /** This function is called periodically during autonomous. */
@@ -233,10 +223,12 @@ public class Robot extends TimedRobot {
     Arm.getInstance().resetEncoderValues();
     Climber.getInstance().resetEncoder();
 
+    // have the robot hold position 
+    
     drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
     drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
     drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
-    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
+    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);    
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Brake);
@@ -255,10 +247,12 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    // stop the robot, lower the arm, turn off the intake
     drivetrain.stop();
     Arm.getInstance().stop();
     Intake.getInstance().stop();
 
+    // you must turn on the coast mode when the robot is disabled, otherwise it won't be movable.
     drivetrain.leftMaster.setNeutralMode(NeutralMode.Coast);
     drivetrain.leftFollower.setNeutralMode(NeutralMode.Coast);
     drivetrain.rightMaster.setNeutralMode(NeutralMode.Coast);
