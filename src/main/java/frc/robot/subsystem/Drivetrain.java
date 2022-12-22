@@ -1,13 +1,23 @@
 package frc.robot.subsystem;
 
+import java.util.Set;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 // import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase{
@@ -15,7 +25,7 @@ public class Drivetrain extends SubsystemBase{
     public TalonSRX leftFollower;
     public TalonSRX rightMaster;
     public TalonSRX rightFollower;   
-    double distance; 
+
 
     AHRS navX;
     private boolean calibration_complete = false;
@@ -29,6 +39,14 @@ public class Drivetrain extends SubsystemBase{
     // double targetRangeLeft = 100;
     double targetPosition = 0;
 
+    static Drivetrain instance = null;
+    
+    public static Drivetrain getInstance() {
+        if (instance == null) {
+            instance = new Drivetrain();
+        }
+        return instance;
+    }
 
     public Drivetrain() {
         leftMaster = new TalonSRX(3); 
@@ -90,6 +108,12 @@ public class Drivetrain extends SubsystemBase{
         stabilizationSetPoint = 0.0;
     }
 
+    /** 
+     * Calculates and sets the amount of power to each side of the drivetrain in order
+     * to create movement.
+     * 
+     * https://xiaoxiae.github.io/Robotics-Simplified-Website/drivetrain-control/arcade-drive/
+     */
     public void arcadeDrive(double velocity, double turnSpeed) {
         if (turnSpeed == 0) {
             if (!turnSpeedWasZero) {
@@ -126,16 +150,28 @@ public class Drivetrain extends SubsystemBase{
         rightFollower.set(ControlMode.PercentOutput, right);    
     }
     
-    public void driveCommand(double inches) {
-        distance = inches;
-        autonDrive(0.4, 0, distance);
+    public void driveCommand(double inches) {        
+        autonDrive(0.4, 0, inches);
     }
 
 
-    public void turnCommand (double inches) {
-        distance = inches;
+    public void turnCommand (double inches) {        
         zeroSensors();
-        turnForInches(distance);
+        turnForInches(inches);
+    }
+
+    public CommandBase makeTurnCmd(double inches) {
+        // https://docs.ctre-phoenix.com/en/latest/ch16_ClosedLoop.html#mechanism-is-finished-command
+        // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html#instantcommand
+        // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html#until-withinterrupt
+        // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html#composing-decorators
+        return
+            new RunCommand(() -> {})
+            .until(() -> allMotorControllersAreWithinTargetErrorThreshhold())
+            .beforeStarting(() -> {
+                zeroSensors();
+                turnForInches(inches);
+            });            
     }
 
     public void autonDrive(double velocity, double turnSpeed, double inches) {
@@ -177,7 +213,7 @@ public class Drivetrain extends SubsystemBase{
             rightMaster.set(ControlMode.PercentOutput, right); 
 
             leftFollower.set(ControlMode.PercentOutput, left);
-            rightFollower.set(ControlMode.PercentOutput, right);
+            rightFollower.set(ControlMode.PercentOutput, right);            
 
             SmartDashboard.putNumber("Left Velocity", left);
             SmartDashboard.putNumber("Right Velocity", right);
@@ -192,10 +228,30 @@ public class Drivetrain extends SubsystemBase{
         targetPosition = inches * clicksPerInch;
         leftMaster.set(ControlMode.Position, targetPosition);
         rightMaster.set(ControlMode.Position, -targetPosition);
+        
     }
 
     public boolean isAtTarget() {
         return (Math.abs(leftMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition)) || (Math.abs(rightMaster.getSelectedSensorPosition(0)) >= Math.abs(targetPosition));
+    }
+
+    private boolean motorControllerWithinThreshhold(BaseMotorController mc, int kErrThreshhold) {        
+        return 
+           (mc.getClosedLoopError() < +kErrThreshhold &&
+            mc.getClosedLoopError() > -kErrThreshhold);
+    }
+    
+    private boolean motorControllersWithinThreshhold(int kErrThreshhold, BaseMotorController... mcs) {        
+        for(BaseMotorController mc:mcs) {
+            if (!motorControllerWithinThreshhold(mc, kErrThreshhold)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean allMotorControllersAreWithinTargetErrorThreshhold() {
+        return motorControllersWithinThreshhold(10, leftMaster, rightMaster);
     }
 
     public void teleopPeriodic() {
@@ -226,6 +282,7 @@ public class Drivetrain extends SubsystemBase{
     public void stop() {
         leftMaster.set(ControlMode.PercentOutput, 0);
         leftFollower.set(ControlMode.PercentOutput, 0);
+        
 
         rightMaster.set(ControlMode.PercentOutput, 0);
         rightFollower.set(ControlMode.PercentOutput, 0);

@@ -34,9 +34,7 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public static Drivetrain drivetrain;
-
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();  
 
   public Robot() {}
 
@@ -49,9 +47,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-    drivetrain = new Drivetrain();
+    SmartDashboard.putData("Auto choices", m_chooser);    
     
+    Drivetrain.getInstance();
+
     CameraServer.startAutomaticCapture();
 
     Climber.getInstance().resetEncoder();
@@ -92,12 +91,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
      System.out.println("--------------------AUTONOMOUS--------------------");    
 
-    drivetrain.resetGyro();
-    drivetrain.zeroSensors();
-    drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
-    drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
-    drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
-    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().resetGyro();
+    Drivetrain.getInstance().zeroSensors();
+    Drivetrain.getInstance().leftMaster.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().leftFollower.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().rightMaster.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().rightFollower.setNeutralMode(NeutralMode.Brake);
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().resetEncoder();
@@ -117,13 +116,13 @@ public class Robot extends TimedRobot {
   // Drops thet ball into the lower hub, turn around, drive out of the tarmac and lower the arm
   public void auton1() {
     if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1) {
-      drivetrain.driveCommand(120);
+      Drivetrain.getInstance().driveCommand(120);
       if (!driven1){
         Arm.getInstance().armMotor.set(-0.025);
         driven1 = true;
       }
     } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && !turned1) {
-        drivetrain.turnCommand(40);
+        Drivetrain.getInstance().turnCommand(40);
         Intake.getInstance().stop();
         turned1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !turned1) {
@@ -137,24 +136,24 @@ public class Robot extends TimedRobot {
       Intake.getInstance().rollOut(0.8);
       Arm.getInstance().armMotor.set(0);
     } else if (Timer.getFPGATimestamp() - startTimestamp > 10.5 && turned1 && armDown && driven1 && pickedUpBall && turned2 && armUp && !driven2) {
-      drivetrain.driveCommand(80);
+      Drivetrain.getInstance().driveCommand(80);
       driven2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 8.75 && turned1 && armDown && driven1 && pickedUpBall && turned2 && !armUp && !driven2) {
       Arm.getInstance().armMotor.set(0.4);
       armUp = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 6 && turned1 && armDown && driven1 && pickedUpBall && !turned2 && !armUp && !driven2) {
-      drivetrain.turnCommand(-40);
+      Drivetrain.getInstance().turnCommand(-40);
       Intake.getInstance().stop();
       turned2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 5 && turned1 && armDown && driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
       Intake.getInstance().rollIn(0.7);
       pickedUpBall = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 4 && turned1 && armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
-      drivetrain.driveCommand(120);
+      Drivetrain.getInstance().driveCommand(120);
       Arm.getInstance().stop();
       driven1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 1.5 && !turned1 && !armDown && !driven1 && !pickedUpBall && !turned2 && !armUp && !driven2) {
-        drivetrain.turnCommand(36);
+        Drivetrain.getInstance().turnCommand(36);
 
         if (!armDown){
           Arm.getInstance().armMotor.set(-0.05);
@@ -179,28 +178,28 @@ public class Robot extends TimedRobot {
     // auton2();    
     if (Timer.getFPGATimestamp() - startTimestamp > 11 && armDown && driven1 && pickedUpBall && turned1 && armUp && driven2 && isFinish) {
       Intake.getInstance().stop();
-      drivetrain.stop();
+      Drivetrain.getInstance().stop();
     } else if (Timer.getFPGATimestamp() - startTimestamp > 10 && armDown && driven1 && pickedUpBall && turned1 && armUp && driven2 && !isFinish) {
       Intake.getInstance().rollOut(1);
       Arm.getInstance().armMotor.set(0);
       isFinish = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 8 && armDown && driven1 && pickedUpBall && turned1 && armUp && !driven2 && !isFinish) {
-      drivetrain.driveCommand(120);
+      Drivetrain.getInstance().driveCommand(120);
       driven2 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 7 && armDown && driven1 && pickedUpBall && turned1 && !armUp && !driven2 && !isFinish) {
       Arm.getInstance().armMotor.set(0.4);
       armUp = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 5 && armDown && driven1 && pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
-      drivetrain.turnForInches(43.5);
+      Drivetrain.getInstance().turnForInches(43.5);
       turned1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 4 && armDown && driven1 && pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
-      drivetrain.stop();
+      Drivetrain.getInstance().stop();
       Intake.getInstance().stop();
     } else if (Timer.getFPGATimestamp() - startTimestamp > 2.5 && armDown && driven1 && !pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
       Intake.getInstance().rollIn(0.85);
       pickedUpBall = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp > 2 && armDown && !driven1 && !pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
-      drivetrain.driveCommand(80);
+      Drivetrain.getInstance().driveCommand(80);
       Arm.getInstance().armMotor.set(0);
       driven1 = true;
     } else if (Timer.getFPGATimestamp() - startTimestamp < 2 && !armDown && !driven1 && !pickedUpBall && !turned1 && !armUp && !driven2 && !isFinish) {
@@ -208,7 +207,7 @@ public class Robot extends TimedRobot {
       armDown = true;
     }
 
-    drivetrain.periodic();
+    Drivetrain.getInstance().periodic();
     CommandScheduler.getInstance().run();
   }
 
@@ -216,8 +215,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     System.out.println("--------------------TELEOP--------------------");
-    drivetrain.resetGyro();
-    drivetrain.resetDrivetrainEncoder();
+    Drivetrain.getInstance().resetGyro();
+    Drivetrain.getInstance().resetDrivetrainEncoder();
     Intake.getInstance().stop();     // We might not need this line
     Arm.getInstance().stop();        // We might not need this line
     Arm.getInstance().resetEncoderValues();
@@ -225,10 +224,10 @@ public class Robot extends TimedRobot {
 
     // have the robot hold position 
     
-    drivetrain.leftMaster.setNeutralMode(NeutralMode.Brake);
-    drivetrain.leftFollower.setNeutralMode(NeutralMode.Brake);
-    drivetrain.rightMaster.setNeutralMode(NeutralMode.Brake);
-    drivetrain.rightFollower.setNeutralMode(NeutralMode.Brake);    
+    Drivetrain.getInstance().leftMaster.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().leftFollower.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().rightMaster.setNeutralMode(NeutralMode.Brake);
+    Drivetrain.getInstance().rightFollower.setNeutralMode(NeutralMode.Brake);    
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kBrake);
     Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Brake);
@@ -237,8 +236,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    drivetrain.periodic();
-    drivetrain.teleopPeriodic();
+    Drivetrain.getInstance().periodic();
+    Drivetrain.getInstance().teleopPeriodic();
     Arm.getInstance().armPeriodic();
     Intake.getInstance().intakePeriodic();
     Climber.getInstance().climberPeriodic();
@@ -248,15 +247,15 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     // stop the robot, lower the arm, turn off the intake
-    drivetrain.stop();
+    Drivetrain.getInstance().stop();
     Arm.getInstance().stop();
     Intake.getInstance().stop();
 
     // you must turn on the coast mode when the robot is disabled, otherwise it won't be movable.
-    drivetrain.leftMaster.setNeutralMode(NeutralMode.Coast);
-    drivetrain.leftFollower.setNeutralMode(NeutralMode.Coast);
-    drivetrain.rightMaster.setNeutralMode(NeutralMode.Coast);
-    drivetrain.rightFollower.setNeutralMode(NeutralMode.Coast);
+    Drivetrain.getInstance().leftMaster.setNeutralMode(NeutralMode.Coast);
+    Drivetrain.getInstance().leftFollower.setNeutralMode(NeutralMode.Coast);
+    Drivetrain.getInstance().rightMaster.setNeutralMode(NeutralMode.Coast);
+    Drivetrain.getInstance().rightFollower.setNeutralMode(NeutralMode.Coast);
     Arm.getInstance().armMotor.setIdleMode(IdleMode.kCoast);
     Climber.getInstance().rotationMotor.setIdleMode(IdleMode.kCoast);
     Climber.getInstance().extensionMotor.setNeutralMode(NeutralMode.Coast);
